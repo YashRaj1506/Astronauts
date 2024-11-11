@@ -1,14 +1,14 @@
 html, body {
     height: 100%;
-    overflow: hidden;
+    /* Removed overflow: hidden to allow scrolling */
+    scroll-behavior: smooth; /* Added for smooth scrolling */
 }
 .section {
-    height: 100vh;
+    min-height: 100vh; /* Changed from height to min-height */
     width: 100vw;
-    overflow: hidden;
+    /* Removed overflow: hidden from sections */
 }
 #section1 {
-    background-image: url('static/images/image_10.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -27,6 +27,7 @@ html, body {
 #section3 {
     background-color: #000;
 }
+/* Rest of your CSS remains the same */
 .star {
     position: absolute;
     width: 2px;
@@ -137,4 +138,47 @@ html, body {
 .navbar-link:hover::after {
     width: 100%;
     left: 0;
+}
+
+.star-container {
+    position: fixed;  /* Changed from absolute to fixed */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;  /* This prevents stars from interfering with clicks */
+    z-index: 1;  /* Place stars behind content but in front of backgrounds */
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 1s infinite alternate;
+}
+
+/* Add a dark overlay to make stars more visible on all sections */
+.section {
+    position: relative;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+.section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);  /* Adds a slight dark overlay */
+    z-index: 0;
+}
+
+/* Ensure section content appears above the overlay */
+.section > * {
+    position: relative;
+    z-index: 2;
 }
