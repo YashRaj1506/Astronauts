@@ -18,12 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function scrollToSection(index) {
         const section = sections[index];
         if (section) {
-            const yOffset = section.offsetTop;
-            window.scrollTo({
-                top: yOffset,
-                behavior: 'smooth'
-            });
-            
+            section.scrollIntoView({ behavior: 'smooth' });
             currentSection = index;
             footer.style.display = index === sections.length - 1 ? 'block' : 'none';
         }
@@ -63,16 +58,46 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(starContainer);
         createStars(starContainer);
         
-        // Initialize main headline with typing effect
+        // Initialize main headline
         const mainHeadline = document.getElementById('mainHeadline');
-        typeWriter(mainHeadline, "Explore the Space and its ventures");
+        const text = "Explore the Space and its ventures";
+        mainHeadline.innerHTML = text.split('').map(char => 
+            char === ' ' ? ' ' : `<span>${char}</span>`
+        ).join('');
 
-        // Add hover functionality
+        // Enhanced hover functionality with debounce
+        let hoverTimeout;
         mainHeadline.addEventListener('mouseenter', () => {
-            scrollToSection(1);
+            clearTimeout(hoverTimeout);
+            hoverTimeout = setTimeout(() => {
+                scrollToSection(1);
+            }, 300); // 300ms delay before scrolling
+        });
+
+        mainHeadline.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
         });
     }, 2000);
 
+    // Track scroll position with Intersection Observer
+    const observerOptions = {
+        root: null,
+        threshold: 0.5
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const index = Array.from(sections).indexOf(entry.target);
+                currentSection = index;
+                footer.style.display = index === sections.length - 1 ? 'block' : 'none';
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        sectionObserver.observe(section);
+    });
     // Track scroll position
     window.addEventListener('scroll', () => {
         const scrollPosition = window.scrollY;
